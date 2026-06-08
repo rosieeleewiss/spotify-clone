@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Clone</title>
+    <style>
+        /* Modern Spotify-like Dark Theme Base */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .player-container {
+            background-color: #181818;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            text-align: center;
+            width: 300px;
+        }
+
+        h2 {
+            color: #1DB954; /* Spotify Green */
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+            color: #b3b3b3;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-container">
+        <h2>My Music Player</h2>
+        <input type="file" id="audioPlayerInput" accept="audio/mp3, audio/wav" />
+        
+        <audio id="mainAudioPlayer" controls></audio>
+    </div>
+
+    <script>
+        const audioInput = document.getElementById('audioPlayerInput');
+        const audioPlayer = document.getElementById('mainAudioPlayer');
+
+        // Event listener triggered when a file is selected
+        audioInput.addEventListener('change', function(event) {
+            const file = event.target.files[0]; // Get the first selected file
+            
+            if (file) {
+                // Create a temporary URL for the local file and assign it to the player
+                const fileUrl = URL.createObjectURL(file);
+                audioPlayer.src = fileUrl;
+                
+                // Automatically play the song
+                audioPlayer.play(); 
+            }
+        });
+    </script>
+</body>
+</html>
