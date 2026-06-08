@@ -1,127 +1,134 @@
-/* Temel Sıfırlamalar ve Renk Değişkenleri */
-:root {
-    --bg-base: #000000;
-    --bg-highlight: #121212;
-    --bg-player: #181818;
-    --text-main: #ffffff;
-    --text-muted: #a7a7a7;
-    --accent-color: #1db954; /* Spotify Yeşili, bunu istediğin gibi değiştirebilirsin */
-}
+/* Önceki CSS kodlarının altına bunları ekle */
 
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-base);
-    color: var(--text-main);
-    height: 100vh;
-    overflow: hidden; /* Sayfanın tamamının kaymasını engeller */
-}
-
-/* Ana Grid Yapısı (Fotoğraftaki yerleşimi sağlayan sihir burası) */
-.app-container {
-    display: grid;
-    grid-template-columns: 280px 1fr 300px; /* Sol menü, Orta Alan, Sağ Menü genişlikleri */
-    grid-template-rows: calc(100vh - 90px) 90px; /* Üst kısımlar ve 90px yüksekliğinde alt oynatıcı */
-    grid-template-areas: 
-        "left main right"
-        "player player player";
-    gap: 8px; /* Bölmeler arası boşluk */
-    padding: 8px;
-    height: 100vh;
-    box-sizing: border-box;
-}
-
-/* Bölme Tasarımları */
-.sidebar-left {
-    grid-area: left;
-    background-color: var(--bg-highlight);
-    border-radius: 8px;
-    padding: 15px;
-    overflow-y: auto;
-}
-
-.main-content {
-    grid-area: main;
-    background-color: var(--bg-highlight);
-    border-radius: 8px;
-    padding: 15px;
-    overflow-y: auto;
-}
-
-.sidebar-right {
-    grid-area: right;
-    background-color: var(--bg-highlight);
-    border-radius: 8px;
-    padding: 15px;
-}
-
-.player-bar {
-    grid-area: player;
-    background-color: var(--bg-base); /* veya bg-player */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px;
-}
-
-/* İçerik Detayları (Örnek Kartlar ve Butonlar) */
-ul.playlist-list {
+/* Sol Menü Liste Elemanları Tasarımı */
+.playlist-list {
     list-style: none;
     padding: 0;
+    margin-top: 15px;
 }
-ul.playlist-list li {
-    padding: 10px 0;
-    color: var(--text-muted);
+
+.playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 6px;
     cursor: pointer;
-}
-ul.playlist-list li:hover {
-    color: var(--text-main);
+    transition: background 0.2s ease;
+    user-select: none;
 }
 
-.card-grid {
-    display: flex;
-    gap: 20px;
+.playlist-item:hover, .playlist-item.selected-active {
+    background-color: #232323;
 }
-.card {
-    background: #181818;
-    padding: 15px;
-    border-radius: 8px;
-    width: 150px;
-}
-.card-image {
-    width: 100%;
-    height: 150px;
+
+.playlist-art {
+    width: 48px;
+    height: 48px;
     border-radius: 4px;
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
 }
 
-/* Alt Oynatıcı Detayları */
-.player-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 40%;
+.liked-art {
+    background: linear-gradient(135deg, #450eff 0%, #8e8ee5 100%);
+    color: white;
+    font-size: 18px;
 }
-.progress-bar {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 10px;
-    color: var(--text-muted);
+
+.text-art {
+    background-color: #282828;
+    color: #a7a7a7;
+    font-size: 18px;
+}
+
+.playlist-info .track-name {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.playlist-info .track-sub {
+    margin: 4px 0 0 0;
     font-size: 12px;
+    color: var(--text-muted);
 }
-.slider {
-    flex-grow: 1;
-    height: 4px;
-    appearance: none;
-    background: #535353;
+
+/* SAĞ TIK MENÜSÜ ANA STİLİ (Görseldeki Birebir Stil) */
+.context-menu {
+    display: none;
+    position: absolute;
+    background-color: #282828;
+    min-width: 240px;
+    box-shadow: 0px 16px 24px rgba(0,0,0,0.3), 0px 6px 10px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    z-index: 1000;
+    padding: 4px;
+}
+
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu ul li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    color: #e0e0e0;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
     border-radius: 2px;
+    transition: background-color 0.1s ease;
 }
-.slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    background: var(--text-main);
-    border-radius: 50%;
+
+.context-menu ul li i:first-child {
+    width: 20px;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #b3b3b3;
+    text-align: center;
+}
+
+.context-menu ul li:hover {
+    background-color: #3e3e3e;
+    color: #ffffff;
+}
+
+.context-menu ul li:hover i {
+    color: #ffffff;
+}
+
+/* Menü Çizgisi */
+.context-menu hr {
+    border: none;
+    border-top: 1px solid #3e3e3e;
+    margin: 4px 0;
+}
+
+/* Devre Dışı/Kilitli Seçenekler (Download ve Report gibi) */
+.context-menu ul li.disabled {
+    color: #727272;
+    cursor: not-allowed;
+}
+.context-menu ul li.disabled i {
+    color: #727272 !important;
+}
+.context-menu ul li.disabled:hover {
+    background-color: transparent;
+}
+
+/* Alt menüsü olanların ok işareti */
+.arrow-right {
+    font-size: 10px !important;
+    color: #b3b3b3;
+}
+.dangerous-icon {
+    font-size: 11px !important;
+    margin-left: auto;
 }
