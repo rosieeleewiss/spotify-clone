@@ -3,72 +3,517 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Clone</title>
+    <title>Spotify Desktop Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Modern Spotify-like Dark Theme Base */
+        :root {
+            --bg-black: #000000;
+            --bg-dark: #121212;
+            --bg-light: #181818;
+            --bg-grey: #242424;
+            --text-white: #ffffff;
+            --text-muted: #b3b3b3;
+            --spotify-green: #1db954;
+        }
+
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 8px;
+            box-sizing: border-box;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Main Window Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            gap: 8px;
+            height: calc(100vh - 100px);
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-dark);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Hidden file input styled as a beautiful button */
+        .upload-btn {
+            background-color: var(--bg-grey);
+            color: var(--text-white);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+            text-align: center;
+            justify-content: center;
+        }
+        .upload-btn:hover {
+            transform: scale(1.04);
+            background-color: #2a2a2a;
+        }
+
+        .playlist-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        .playlist-list li:hover {
+            color: var(--text-white);
+            cursor: pointer;
+        }
+
+        /* Center Content Area */
+        .main-content {
+            flex: 1;
+            background: linear-gradient(to bottom, #2e4857, var(--bg-dark) 40%);
+            border-radius: 8px;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .playlist-header {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+
+        .playlist-cover {
+            width: 192px;
+            height: 192px;
+            background-color: var(--bg-grey);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            color: var(--text-muted);
+        }
+
+        .playlist-info h1 {
+            font-size: 72px;
+            margin: 0 0 10px 0;
+            font-weight: 900;
+        }
+
+        .playlist-info p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Tracklist Table */
+        .tracklist-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .tracklist-table th {
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .tracklist-table td {
+            padding: 12px 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+            vertical-align: middle;
+        }
+
+        .tracklist-row {
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tracklist-row:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .tracklist-row:hover td {
+            color: var(--text-white);
+        }
+
+        .track-title-info {
+            color: var(--text-white) !important;
+            font-weight: 500;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 320px;
+            background-color: var(--bg-dark);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .now-playing-card {
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .big-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: var(--bg-grey);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Player Bar */
+        .player-bar {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            margin-top: 8px;
+        }
+
+        .current-track {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 30%;
+        }
+
+        .mini-cover {
+            width: 56px;
+            height: 56px;
+            background-color: var(--bg-grey);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        .track-details h4 {
+            margin: 0;
+            font-size: 14px;
+        }
+        .track-details p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .player-controls {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            gap: 8px;
+            width: 40%;
         }
 
-        .player-container {
-            background-color: #181818;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
-            text-align: center;
-            width: 300px;
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+        .control-buttons i:hover {
+            color: var(--text-white);
+            cursor: pointer;
+        }
+        .master-play {
+            font-size: 32px;
+            color: var(--text-white);
+            transition: transform 0.1s;
+        }
+        .master-play:hover {
+            transform: scale(1.06);
         }
 
-        h2 {
-            color: #1DB954; /* Spotify Green */
-            margin-bottom: 20px;
-        }
-
-        input[type="file"] {
-            margin-bottom: 20px;
-            color: #b3b3b3;
-        }
-
-        audio {
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             width: 100%;
-            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .progress-bar-bg {
+            flex: 1;
+            height: 4px;
+            background-color: var(--bg-grey);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--text-white);
+            border-radius: 2px;
+        }
+        .progress-bar-bg:hover .progress-bar-fill {
+            background-color: var(--spotify-green);
+        }
+
+        .volume-controls {
+            width: 30%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-    <div class="player-container">
-        <h2>My Music Player</h2>
-        <input type="file" id="audioPlayerInput" accept="audio/mp3, audio/wav" />
-        
-        <audio id="mainAudioPlayer" controls></audio>
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-layer-group"></i> Your Library</h3>
+            
+            <input type="file" id="multiAudioInput" accept="audio/mp3" multiple style="display: none;" />
+            <label for="multiAudioInput" class="upload-btn">
+                <i class="fa-solid fa-plus"></i> Add MP3 Files
+            </label>
+
+            <ul class="playlist-list">
+                <li><i class="fa-solid fa-music"></i> ~ T^T ~</li>
+                <li><i class="fa-solid fa-music"></i> ~Slam Dunkk~</li>
+                <li><i class="fa-solid fa-music"></i> My Playlist #2</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="playlist-header">
+                <div class="playlist-cover" id="headerCover">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div class="playlist-info">
+                    <p>Public Playlist</p>
+                    <h1 id="playlistTitle">~ T^T ~</h1>
+                    <p id="songCount">0 songs uploaded</p>
+                </div>
+            </div>
+
+            <table class="tracklist-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 50%">Title</th>
+                        <th style="width: 35%">Album</th>
+                        <th style="width: 10%"><i class="fa-regular fa-clock"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="tracklistBody">
+                    </tbody>
+            </table>
+        </main>
+
+        <aside class="right-panel">
+            <h3>~T^T~ Details</h3>
+            <div class="now-playing-card">
+                <div class="big-cover" id="rightBigCover">
+                    <i class="fa-solid fa-compact-disc"></i>
+                </div>
+                <h3 id="rightTrackTitle" style="margin: 0 0 5px 0;">No Track Selected</h3>
+                <p id="rightTrackArtist" style="margin: 0; color: var(--text-muted); font-size: 14px;">Local Audio File</p>
+            </div>
+        </aside>
     </div>
 
-    <script>
-        const audioInput = document.getElementById('audioPlayerInput');
-        const audioPlayer = document.getElementById('mainAudioPlayer');
+    <footer class="player-bar">
+        <div class="current-track">
+            <div class="mini-cover" id="bottomMiniCover">
+                <i class="fa-solid fa-compact-disc"></i>
+            </div>
+            <div class="track-details">
+                <h4 id="bottomTrackTitle">Select a song</h4>
+                <p id="bottomTrackArtist">from the list</p>
+            </div>
+        </div>
 
-        // Event listener triggered when a file is selected
-        audioInput.addEventListener('change', function(event) {
-            const file = event.target.files[0]; // Get the first selected file
+        <div class="player-controls">
+            <div class="control-buttons">
+                <i class="fa-solid fa-shuffle"></i>
+                <i class="fa-solid fa-backward-step"></i>
+                <i class="fa-solid fa-circle-play master-play" id="masterPlayBtn"></i>
+                <i class="fa-solid fa-forward-step"></i>
+                <i class="fa-solid fa-repeat"></i>
+            </div>
+            <div class="progress-container">
+                <span id="currentTime">0:00</span>
+                <div class="progress-bar-bg" id="progressBarBg">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <span id="totalTime">0:00</span>
+            </div>
+        </div>
+
+        <div class="volume-controls">
+            <i class="fa-solid fa-volume-high"></i>
+            <div class="progress-bar-bg" style="width: 100px; flex: none;">
+                <div class="progress-bar-fill" style="width: 70%;"></div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('multiAudioInput');
+        const tracklistBody = document.getElementById('tracklistBody');
+        const songCountText = document.getElementById('songCount');
+        
+        // Master UI Elements
+        const masterPlayBtn = document.getElementById('masterPlayBtn');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressBarBg = document.getElementById('progressBarBg');
+        const currentTimeText = document.getElementById('currentTime');
+        const totalTimeText = document.getElementById('totalTime');
+        
+        // Dynamic Meta Elements
+        const bottomTitle = document.getElementById('bottomTrackTitle');
+        const bottomArtist = document.getElementById('bottomTrackArtist');
+        const rightTitle = document.getElementById('rightTrackTitle');
+
+        let songsList = [];
+        let currentSongIndex = null;
+        let mainAudio = new Audio();
+
+        // 1. Handle Multiple MP3 Selection
+        fileInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            if(files.length === 0) return;
+
+            songsList = files;
+            songCountText.innerText = `${songsList.length} songs uploaded`;
             
-            if (file) {
-                // Create a temporary URL for the local file and assign it to the player
-                const fileUrl = URL.createObjectURL(file);
-                audioPlayer.src = fileUrl;
+            // Clear existing rows
+            tracklistBody.innerHTML = '';
+
+            // Render tracks inside table
+            songsList.forEach((file, index) => {
+                // Strip extension (.mp3) from name for cleaner look
+                const cleanName = file.name.replace(/\.[^/.]+$/, "");
                 
-                // Automatically play the song
-                audioPlayer.play(); 
+                const row = document.createElement('tr');
+                row.className = 'tracklist-row';
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="track-title-info">${cleanName}</td>
+                    <td>Local Album</td>
+                    <td>--:--</td>
+                `;
+                
+                // Click to play row
+                row.addEventListener('click', () => playTrack(index));
+                tracklistBody.appendChild(row);
+            });
+        });
+
+        // 2. Play Selected Track
+        function playTrack(index) {
+            currentSongIndex = index;
+            const file = songsList[index];
+            const cleanName = file.name.replace(/\.[^/.]+$/, "");
+
+            // Set source and play
+            mainAudio.src = URL.createObjectURL(file);
+            mainAudio.play();
+
+            // Update UI Icons and Texts
+            masterPlayBtn.className = "fa-solid fa-circle-pause master-play";
+            bottomTitle.innerText = cleanName;
+            bottomArtist.innerText = "Local MP3";
+            rightTitle.innerText = cleanName;
+        }
+
+        // 3. Master Play/Pause Toggle
+        masterPlayBtn.addEventListener('click', () => {
+            if(currentSongIndex === null && songsList.length > 0) {
+                playTrack(0); // Play first song if none selected
+                return;
+            }
+            if(currentSongIndex === null) return;
+
+            if(mainAudio.paused) {
+                mainAudio.play();
+                masterPlayBtn.className = "fa-solid fa-circle-pause master-play";
+            } else {
+                mainAudio.pause();
+                masterPlayBtn.className = "fa-solid fa-circle-play master-play";
             }
         });
+
+        // 4. Update Progress Bar Tracker
+        mainAudio.addEventListener('timeupdate', () => {
+            if(!mainAudio.duration) return;
+            
+            // Percentage tracking
+            const progressPercent = (mainAudio.currentTime / mainAudio.duration) * 100;
+            progressBarFill.style.width = `${progressPercent}%`;
+            
+            // Time text parsing
+            currentTimeText.innerText = formatTime(mainAudio.currentTime);
+            totalTimeText.innerText = formatTime(mainAudio.duration);
+        });
+
+        // 5. Seek on Progress Bar Click
+        progressBarBg.addEventListener('click', (e) => {
+            if(!mainAudio.duration) return;
+            const clickX = e.offsetX;
+            const width = progressBarBg.clientWidth;
+            mainAudio.currentTime = (clickX / width) * mainAudio.duration;
+        });
+
+        // Helper: Format seconds to MM:SS
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
     </script>
 </body>
 </html>
