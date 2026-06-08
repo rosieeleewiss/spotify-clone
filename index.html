@@ -3,30 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Desktop Clone</title>
+    <title>Spotify – Web Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --bg-black: #000000;
-            --bg-dark: #121212;
-            --bg-light: #181818;
-            --bg-grey: #242424;
+            --bg-base: #121212;
+            --bg-highlight: #1a1a1a;
+            --bg-press: #282828;
             --text-white: #ffffff;
-            --text-muted: #b3b3b3;
+            --text-muted: #a7a7a7;
             --spotify-green: #1db954;
+            --spotify-green-hover: #1ed760;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             background-color: var(--bg-black);
             color: var(--text-white);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Circular Std', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 8px;
-            box-sizing: border-box;
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        /* Webkit Scrollbar Customization */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Main Window Layout */
@@ -34,56 +54,81 @@
             display: flex;
             flex: 1;
             gap: 8px;
-            height: calc(100vh - 100px);
+            height: calc(100vh - 106px);
+            overflow: hidden;
         }
 
-        /* Left Sidebar */
-        .sidebar {
-            width: 300px;
-            background-color: var(--bg-dark);
-            border-radius: 8px;
-            padding: 15px;
+        /* Left Sidebar Container */
+        .left-sidebar {
+            width: 320px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Spotify Segmented Boxes */
+        .nav-box, .library-box {
+            background-color: var(--bg-base);
+            border-radius: 8px;
+            padding: 20px 24px;
+        }
+
+        .nav-box {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--text-white);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .library-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 12px 8px 12px 16px;
+            overflow: hidden;
         }
 
         .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 10px;
+            padding-right: 8px;
         }
 
         .sidebar-header h3 {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 700;
             color: var(--text-muted);
             display: flex;
             align-items: center;
             gap: 12px;
             transition: color 0.2s;
+            cursor: pointer;
         }
         .sidebar-header h3:hover {
             color: var(--text-white);
-        }
-
-        .create-playlist-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s, background-color 0.2s;
-        }
-        .create-playlist-btn:hover {
-            color: var(--text-white);
-            background-color: rgba(255,255,255,0.1);
         }
 
         .playlist-list {
@@ -94,38 +139,38 @@
             flex-direction: column;
             gap: 4px;
             overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
         }
         
         .playlist-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 8px 12px;
+            padding: 8px;
             border-radius: 6px;
             color: var(--text-muted);
-            font-size: 14px;
             cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
+            transition: background-color 0.2s;
         }
         .playlist-item:hover {
-            color: var(--text-white);
-            background-color: rgba(255,255,255,0.05);
+            background-color: var(--bg-highlight);
         }
         .playlist-item.active {
-            color: var(--spotify-green);
-            background-color: rgba(255,255,255,0.1);
+            background-color: var(--bg-press);
+            color: var(--text-white);
         }
         .playlist-item img {
             width: 48px;
             height: 48px;
             border-radius: 4px;
             object-fit: cover;
-            background-color: var(--bg-grey);
         }
         .playlist-item-info h4 {
             margin: 0;
             font-size: 14px;
             color: var(--text-white);
+            font-weight: 500;
         }
         .playlist-item-info p {
             margin: 4px 0 0 0;
@@ -135,12 +180,60 @@
         /* Center Content Area */
         .main-content {
             flex: 1;
-            background: linear-gradient(to bottom, #243642, var(--bg-dark) 50%);
+            background: linear-gradient(to bottom, #1e1e1e 0%, var(--bg-base) 40%);
             border-radius: 8px;
             overflow-y: auto;
-            padding: 24px;
             display: flex;
             flex-direction: column;
+            position: relative;
+        }
+
+        /* Sticky Top Bar Layout */
+        .top-bar {
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 8px;
+        }
+
+        .arrow-btn {
+            background-color: rgba(0,0,0,0.7);
+            border: none;
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: not-allowed;
+        }
+
+        .user-badge {
+            background-color: rgba(0,0,0,0.7);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            cursor: pointer;
+        }
+
+        .content-body {
+            padding: 0 32px 32px 32px;
         }
 
         .playlist-header {
@@ -148,27 +241,29 @@
             align-items: flex-end;
             gap: 24px;
             margin-bottom: 25px;
+            margin-top: 20px;
         }
 
-        /* Cover Image & Upload Style */
+        /* Cover Design */
         .cover-wrapper {
             position: relative;
-            width: 192px;
-            height: 192px;
+            width: 232px;
+            height: 232px;
             border-radius: 4px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             overflow: hidden;
             cursor: pointer;
+            flex-shrink: 0;
         }
         
         .playlist-cover {
             width: 100%;
             height: 100%;
-            background-color: var(--bg-grey);
+            background-color: #282828;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 64px;
+            font-size: 80px;
             color: var(--text-muted);
             object-fit: cover;
         }
@@ -194,44 +289,56 @@
             opacity: 1;
         }
 
-        .playlist-info h1 {
-            font-size: 56px;
-            margin: 0 0 10px 0;
-            font-weight: 900;
-        }
         .playlist-info p {
             margin: 0;
-            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .playlist-info h1 {
+            font-size: 72px;
+            margin: 8px 0 16px 0;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+        .playlist-info .meta-text {
+            color: var(--text-white);
             font-size: 14px;
+            text-transform: none;
+            font-weight: 400;
+        }
+        .playlist-info .meta-text span {
+            color: var(--text-muted);
         }
 
         .action-bar {
-            padding: 20px 0;
+            padding: 24px 0;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
         }
 
         .upload-btn {
             background-color: var(--spotify-green);
             color: var(--bg-black);
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 25px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             font-size: 14px;
-            transition: transform 0.2s;
+            transition: transform 0.1s;
         }
         .upload-btn:hover {
             transform: scale(1.04);
-            background-color: #1ed760;
+            background-color: var(--spotify-green-hover);
         }
 
-        /* Tracklist Table */
+        /* Tracklist Table Layout */
         .tracklist-table {
             width: 100%;
             border-collapse: collapse;
@@ -240,12 +347,14 @@
         .tracklist-table th {
             color: var(--text-muted);
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding: 10px;
+            padding: 8px 16px;
             font-size: 12px;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
         }
         .tracklist-table td {
-            padding: 12px 10px;
+            padding: 8px 16px;
             font-size: 14px;
             color: var(--text-muted);
             vertical-align: middle;
@@ -255,7 +364,7 @@
             cursor: pointer;
         }
         .tracklist-row:hover {
-            background-color: rgba(255,255,255,0.08);
+            background-color: rgba(255, 255, 255, 0.08);
         }
         .tracklist-row:hover td {
             color: var(--text-white);
@@ -265,43 +374,44 @@
             font-weight: 500;
         }
 
-        /* Right Panel */
+        /* Right Panel Details */
         .right-panel {
-            width: 320px;
-            background-color: var(--bg-dark);
+            width: 300px;
+            background-color: var(--bg-base);
             border-radius: 8px;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .right-panel h3 {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 700;
         }
 
         .now-playing-card {
-            background-color: var(--bg-light);
+            background-color: var(--bg-highlight);
             border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            padding: 16px;
         }
 
         .big-cover-wrapper {
             width: 100%;
             aspect-ratio: 1;
-            background-color: var(--bg-grey);
+            background-color: #282828;
             border-radius: 6px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 80px;
             color: var(--text-muted);
             overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
         .big-cover-wrapper img {
             width: 100%;
@@ -309,27 +419,25 @@
             object-fit: cover;
         }
 
-        /* Artist info section like real Spotify */
         .artist-card {
-            background-color: var(--bg-light);
+            background-color: var(--bg-highlight);
             border-radius: 8px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            text-align: left;
         }
         .artist-card-img {
-            height: 120px;
-            background: linear-gradient(to bottom, #454545, #282828);
-            position: relative;
+            height: 140px;
+            background: linear-gradient(to bottom, #535353, #282828);
             display: flex;
             align-items: flex-end;
-            padding: 15px;
-            font-weight: bold;
+            padding: 16px;
+            font-weight: 700;
+            font-size: 14px;
         }
         .artist-card-body {
-            padding: 15px;
-            font-size: 14px;
+            padding: 16px;
+            font-size: 13px;
         }
         .artist-card-body p {
             margin: 0 0 8px 0;
@@ -343,7 +451,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            margin-top: 8px;
+            background-color: var(--bg-black);
+            margin-top: auto;
         }
 
         .current-track {
@@ -351,12 +460,13 @@
             align-items: center;
             gap: 14px;
             width: 30%;
+            min-width: 180px;
         }
 
         .mini-cover {
             width: 56px;
             height: 56px;
-            background-color: var(--bg-grey);
+            background-color: #282828;
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -364,6 +474,7 @@
             font-size: 20px;
             color: var(--text-muted);
             overflow: hidden;
+            flex-shrink: 0;
         }
         .mini-cover img {
             width: 100%;
@@ -374,10 +485,11 @@
         .track-details h4 {
             margin: 0;
             font-size: 14px;
+            font-weight: 400;
         }
         .track-details p {
             margin: 4px 0 0 0;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
         }
 
@@ -387,13 +499,14 @@
             align-items: center;
             gap: 8px;
             width: 40%;
+            max-width: 600px;
         }
 
         .control-buttons {
             display: flex;
             align-items: center;
             gap: 24px;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-muted);
         }
         .control-buttons i:hover {
@@ -414,14 +527,14 @@
             align-items: center;
             gap: 8px;
             width: 100%;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
         }
 
         .progress-bar-bg {
             flex: 1;
             height: 4px;
-            background-color: var(--bg-grey);
+            background-color: #4d4d4d;
             border-radius: 2px;
             cursor: pointer;
             position: relative;
@@ -444,69 +557,111 @@
             gap: 12px;
             color: var(--text-muted);
         }
+        
+        /* Functional range slider styling for volume */
+        .vol-slider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 4px;
+            background: #4d4d4d;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            display: none;
+        }
+        .vol-sidebar-container:hover .vol-slider::-webkit-slider-thumb,
+        .volume-controls:hover .vol-slider::-webkit-slider-thumb {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fa-solid fa-layer-group"></i> Your Library</h3>
-                <button class="create-playlist-btn" id="createPlaylistBtn" title="Create Playlist">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
+        <div class="left-sidebar">
+            <div class="nav-box">
+                <div class="nav-item active"><i class="fa-solid fa-house"></i> Home</div>
+                <div class="nav-item"><i class="fa-solid fa-magnifying-glass"></i> Search</div>
             </div>
+            
+            <div class="library-box">
+                <div class="sidebar-header">
+                    <h3><i class="fa-solid fa-layer-group"></i> Your Library</h3>
+                    <button class="create-playlist-btn" id="createPlaylistBtn" title="Create Playlist" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:16px;">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
 
-            <ul class="playlist-list" id="playlistListContainer">
-            </ul>
-        </aside>
+                <ul class="playlist-list" id="playlistListContainer"></ul>
+            </div>
+        </div>
 
         <main class="main-content" id="mainContentArea">
-            <div id="playlistView" style="display: none;">
-                <div class="playlist-header">
-                    <div class="cover-wrapper" id="changeCoverBtn">
-                        <img class="playlist-cover" id="headerCoverImg" src="" style="display:none;" />
-                        <div class="playlist-cover" id="headerCoverIcon">
-                            <i class="fa-solid fa-music"></i>
-                        </div>
-                        <div class="cover-overlay">
-                            <i class="fa-solid fa-pen"></i>
-                            <span>Choose Photo</span>
-                        </div>
-                    </div>
-                    <input type="file" id="coverImageInput" accept="image/*" style="display: none;" />
-
-                    <div class="playlist-info">
-                        <p>Playlist</p>
-                        <h1 id="playlistTitle">Loading...</h1>
-                        <p id="songCount">0 songs</p>
-                    </div>
+            <div class="top-bar">
+                <div class="nav-arrows">
+                    <button class="arrow-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="arrow-btn"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-
-                <div class="action-bar">
-                    <input type="file" id="multiAudioInput" accept="audio/mp3" multiple style="display: none;" />
-                    <label for="multiAudioInput" class="upload-btn">
-                        <i class="fa-solid fa-plus"></i> Add Songs to This Playlist
-                    </label>
+                <div class="user-badge">
+                    <i class="fa-solid fa-user"></i>
                 </div>
-
-                <table class="tracklist-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%">#</th>
-                            <th style="width: 50%">Title</th>
-                            <th style="width: 35%">Album</th>
-                            <th style="width: 10%"><i class="fa-regular fa-clock"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody id="tracklistBody">
-                    </tbody>
-                </table>
             </div>
 
-            <div id="emptyView" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
-                <i class="fa-solid fa-music" style="font-size: 48px; margin-bottom: 15px;"></i>
-                <p>Create a playlist from the "+" button on the top left to get started.</p>
+            <div class="content-body">
+                <div id="playlistView" style="display: none;">
+                    <div class="playlist-header">
+                        <div class="cover-wrapper" id="changeCoverBtn">
+                            <img class="playlist-cover" id="headerCoverImg" src="" style="display:none;" />
+                            <div class="playlist-cover" id="headerCoverIcon">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+                            <div class="cover-overlay">
+                                <i class="fa-solid fa-pen"></i>
+                                <span>Choose Photo</span>
+                            </div>
+                        </div>
+                        <input type="file" id="coverImageInput" accept="image/*" style="display: none;" />
+
+                        <div class="playlist-info">
+                            <p>Playlist</p>
+                            <h1 id="playlistTitle">Loading...</h1>
+                            <p class="meta-text" id="songCount">0 songs</p>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <input type="file" id="multiAudioInput" accept="audio/mp3" multiple style="display: none;" />
+                        <label for="multiAudioInput" class="upload-btn">
+                            <i class="fa-solid fa-plus"></i> Add Songs to This Playlist
+                        </label>
+                    </div>
+
+                    <table class="tracklist-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 50%">Title</th>
+                                <th style="width: 35%">Album</th>
+                                <th style="width: 10%"><i class="fa-regular fa-clock"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracklistBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="emptyView" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 100px; color: var(--text-muted);">
+                    <i class="fa-solid fa-music" style="font-size: 64px; margin-bottom: 20px;"></i>
+                    <p style="font-size: 16px; font-weight: 600;">Create a playlist to get started.</p>
+                    <p style="font-size: 14px; margin-top: 4px;">Click the plus icon inside your library view panel.</p>
+                </div>
             </div>
         </main>
 
@@ -516,17 +671,17 @@
                 <div class="big-cover-wrapper" id="rightBigCover">
                     <i class="fa-solid fa-compact-disc"></i>
                 </div>
-                <h3 id="rightTrackTitle" style="margin: 0 0 5px 0; font-size: 18px;">No Song Selected</h3>
-                <p id="rightTrackArtist" style="margin: 0; color: var(--text-muted); font-size: 14px;">Local Audio File</p>
+                <h3 id="rightTrackTitle" style="margin: 0 0 5px 0; font-size: 16px;">No Song Selected</h3>
+                <p id="rightTrackArtist" style="margin: 0; color: var(--text-muted); font-size: 12px;">Local Audio File</p>
             </div>
 
             <div class="artist-card">
                 <div class="artist-card-img" id="artistCardBg">
-                    Artist Profile
+                    About the Artist
                 </div>
                 <div class="artist-card-body">
-                    <p style="font-weight: bold; color: white;" id="artistCardName">Local Musician</p>
-                    <span style="color: var(--text-muted); font-size: 12px;">Local media file played from your device.</span>
+                    <p style="font-weight: 700; color: white; margin-bottom: 4px;" id="artistCardName">Local Musician</p>
+                    <span style="color: var(--text-muted); font-size: 12px; line-height: 1.4;">Local audio media file mapped from your desktop workstation storage seamlessly.</span>
                 </div>
             </div>
         </aside>
@@ -562,23 +717,21 @@
 
         <div class="volume-controls">
             <i class="fa-solid fa-volume-high"></i>
-            <div class="progress-bar-bg" style="width: 100px; flex: none;">
-                <div class="progress-bar-fill" style="width: 70%;"></div>
-            </div>
+            <input type="range" id="volumeSlider" min="0" max="100" value="70" class="vol-slider">
         </div>
     </footer>
 
     <script>
-        // State (Application Memory)
-        // Hardcoded permanent Liked Songs playlist
+        // State (Application Memory Matrix)
         let playlists = [
             { id: 'liked', name: 'Liked Songs', cover: null, songs: [] }
         ];
         let activePlaylistId = null;
         let currentSongIndex = null;
         let mainAudio = new Audio();
+        mainAudio.volume = 0.7; // Init standard volume sync
 
-        // Element Selectors
+        // Document Selector Query Nodes
         const playlistListContainer = document.getElementById('playlistListContainer');
         const createPlaylistBtn = document.getElementById('createPlaylistBtn');
         const playlistView = document.getElementById('playlistView');
@@ -595,7 +748,6 @@
         
         const multiAudioInput = document.getElementById('multiAudioInput');
         
-        // Player UI Elements
         const masterPlayBtn = document.getElementById('masterPlayBtn');
         const progressBarFill = document.getElementById('progressBarFill');
         const progressBarBg = document.getElementById('progressBarBg');
@@ -606,12 +758,12 @@
         const bottomArtist = document.getElementById('bottomTrackArtist');
         const bottomMiniCover = document.getElementById('bottomMiniCover');
         
-        // Right Panel Elements
         const rightPanelHeader = document.getElementById('rightPanelHeader');
         const rightBigCover = document.getElementById('rightBigCover');
         const rightTrackTitle = document.getElementById('rightTrackTitle');
         const rightTrackArtist = document.getElementById('rightTrackArtist');
         const artistCardName = document.getElementById('artistCardName');
+        const volumeSlider = document.getElementById('volumeSlider');
 
         // --- 1. RENDER PLAYLIST LIBRARIES ---
         function renderPlaylists() {
@@ -620,10 +772,9 @@
                 const li = document.createElement('li');
                 li.className = `playlist-item ${pl.id === activePlaylistId ? 'active' : ''}`;
                 
-                // Custom style for permanent Liked Songs list icon
                 let imgHtml = '';
                 if (pl.id === 'liked') {
-                    imgHtml = `<div style="width:48px; height:48px; background: linear-gradient(135deg, #450af5 0%, #c4efd9 100%); border-radius:4px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-heart" style="color:#ffffff; font-size: 18px;"></i></div>`;
+                    imgHtml = `<div style="width:48px; height:48px; background: linear-gradient(135deg, #450af5 0%, #c4efd9 100%); border-radius:4px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-heart" style="color:#ffffff; font-size: 16px;"></i></div>`;
                 } else {
                     imgHtml = pl.cover 
                         ? `<img src="${pl.cover}" />` 
@@ -674,7 +825,6 @@
             renderTracks(pl);
             renderPlaylists();
 
-            // Cover Customization Settings
             if (pl.id === 'liked' && !pl.cover) {
                 headerCoverImg.style.display = 'none';
                 headerCoverIcon.style.display = 'flex';
@@ -687,13 +837,13 @@
             } else {
                 headerCoverImg.style.display = 'none';
                 headerCoverIcon.style.display = 'flex';
-                headerCoverIcon.style.background = 'var(--bg-grey)';
+                headerCoverIcon.style.background = 'var(--bg-highlight)';
                 headerCoverIcon.innerHTML = '<i class="fa-solid fa-music"></i>';
             }
         }
 
         function updateSongCount(pl) {
-            songCountText.innerText = `${pl.songs.length} ${pl.songs.length === 1 ? 'song' : 'songs'} loaded`;
+            songCountText.innerText = `${pl.songs.length} ${pl.songs.length === 1 ? 'song' : 'songs'}`;
         }
 
         // --- 4. UPLOAD CUSTOM COVER PHOTO ---
@@ -740,10 +890,7 @@
             if (files.length === 0 || !activePlaylistId) return;
 
             const pl = playlists.find(p => p.id === activePlaylistId);
-            
-            files.forEach(file => {
-                pl.songs.push(file);
-            });
+            files.forEach(file => { pl.songs.push(file); });
 
             updateSongCount(pl);
             renderTracks(pl);
@@ -755,7 +902,7 @@
             tracklistBody.innerHTML = '';
             
             if (pl.songs.length === 0) {
-                tracklistBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 15px;"><i class="fa-solid fa-circle-plus" style="font-size: 28px; display:block; margin-bottom:10px;"></i> This playlist is empty.<br>Use the "Add Songs" button above to populate your list.</td></tr>`;
+                tracklistBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 14px;"><i class="fa-solid fa-circle-plus" style="font-size: 28px; display:block; margin-bottom:12px; color: #4d4d4d;"></i> Let's add some local media tracks to this collection panel workspace.</td></tr>`;
                 return;
             }
 
@@ -770,7 +917,7 @@
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td class="track-title-info">${cleanName}</td>
-                    <td>Local Album</td>
+                    <td>Local Album Workspace</td>
                     <td>--:--</td>
                 `;
                 
@@ -793,11 +940,11 @@
 
             masterPlayBtn.className = "fa-solid fa-circle-pause master-play";
             bottomTitle.innerText = cleanName;
-            bottomArtist.innerText = "Local MP3";
+            bottomArtist.innerText = "Local Desktop System Stream";
 
             rightTrackTitle.innerText = cleanName;
-            rightTrackArtist.innerText = "Local Artist";
-            artistCardName.innerText = "Local Musician";
+            rightTrackArtist.innerText = "Local File Node";
+            artistCardName.innerText = "Local Node Artist";
             
             updateRightPanelCover(pl);
             renderTracks(pl);
@@ -855,13 +1002,18 @@
             mainAudio.currentTime = (clickX / width) * mainAudio.duration;
         });
 
+        // Volume Node Adjustment Sync Handler
+        volumeSlider.addEventListener('input', (e) => {
+            mainAudio.volume = e.target.value / 100;
+        });
+
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        // App Launch Setup
+        // App Framework Launch Initializer
         renderPlaylists();
     </script>
 </body>
