@@ -1,0 +1,127 @@
+/* Temel Sıfırlamalar ve Renk Değişkenleri */
+:root {
+    --bg-base: #000000;
+    --bg-highlight: #121212;
+    --bg-player: #181818;
+    --text-main: #ffffff;
+    --text-muted: #a7a7a7;
+    --accent-color: #1db954; /* Spotify Yeşili, bunu istediğin gibi değiştirebilirsin */
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden; /* Sayfanın tamamının kaymasını engeller */
+}
+
+/* Ana Grid Yapısı (Fotoğraftaki yerleşimi sağlayan sihir burası) */
+.app-container {
+    display: grid;
+    grid-template-columns: 280px 1fr 300px; /* Sol menü, Orta Alan, Sağ Menü genişlikleri */
+    grid-template-rows: calc(100vh - 90px) 90px; /* Üst kısımlar ve 90px yüksekliğinde alt oynatıcı */
+    grid-template-areas: 
+        "left main right"
+        "player player player";
+    gap: 8px; /* Bölmeler arası boşluk */
+    padding: 8px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Bölme Tasarımları */
+.sidebar-left {
+    grid-area: left;
+    background-color: var(--bg-highlight);
+    border-radius: 8px;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.main-content {
+    grid-area: main;
+    background-color: var(--bg-highlight);
+    border-radius: 8px;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.sidebar-right {
+    grid-area: right;
+    background-color: var(--bg-highlight);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.player-bar {
+    grid-area: player;
+    background-color: var(--bg-base); /* veya bg-player */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+/* İçerik Detayları (Örnek Kartlar ve Butonlar) */
+ul.playlist-list {
+    list-style: none;
+    padding: 0;
+}
+ul.playlist-list li {
+    padding: 10px 0;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+ul.playlist-list li:hover {
+    color: var(--text-main);
+}
+
+.card-grid {
+    display: flex;
+    gap: 20px;
+}
+.card {
+    background: #181818;
+    padding: 15px;
+    border-radius: 8px;
+    width: 150px;
+}
+.card-image {
+    width: 100%;
+    height: 150px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Alt Oynatıcı Detayları */
+.player-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+}
+.progress-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+.slider {
+    flex-grow: 1;
+    height: 4px;
+    appearance: none;
+    background: #535353;
+    border-radius: 2px;
+}
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--text-main);
+    border-radius: 50%;
+}
