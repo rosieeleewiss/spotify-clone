@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kendi Müzik Kutum</title>
+    <title>Spotify Klonu - Özel Tasarım</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Spotify tarzı özel kaydırma çubuğu */
+        /* Spotify tarzı ince ve koyu kaydırma çubuğu */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #121212; }
         ::-webkit-scrollbar-thumb { background: #282828; border-radius: 4px; }
@@ -16,14 +16,220 @@
 </head>
 <body class="bg-black text-white font-sans h-screen flex flex-col select-none overflow-hidden">
 
-    <div class="flex flex-1 h-[calc(100vh-90px)] p-2 gap-2">
+    <header class="h-16 flex justify-between items-center px-6 mt-2 z-30">
+        <div class="flex items-center pl-2">
+            <i class="fa-brands fa-spotify text-white text-3xl"></i>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button class="w-10 h-10 bg-[#1f1f1f] hover:bg-[#2a2a2a] rounded-full flex items-center justify-center hover:scale-105 transition text-white text-lg">
+                <i class="fa-solid fa-house"></i>
+            </button>
+            
+            <div class="flex items-center gap-3 bg-[#1f1f1f] hover:bg-[#2a2a2a] border border-transparent focus-within:border-white px-4 py-2.5 rounded-full w-[480px] transition group">
+                <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-white text-base"></i>
+                <input type="text" placeholder="What do you want to play?" class="bg-transparent outline-none text-sm w-full text-white placeholder-gray-400 font-medium">
+                <button class="text-gray-400 hover:text-white border-l border-gray-700 pl-3 flex items-center justify-center">
+                    <i class="fa-solid fa-box-archive text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="hidden lg:flex items-center gap-4 text-sm font-bold text-gray-400">
+                <a href="#" class="hover:text-white transition">Premium</a>
+                <a href="#" class="hover:text-white transition">Support</a>
+                <a href="#" class="hover:text-white transition">Download</a>
+                <span class="text-gray-600">|</span>
+                <a href="#" class="hover:text-white transition flex items-center gap-1.5"><i class="fa-regular fa-circle-down"></i> Install App</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-gray-400 font-bold text-sm hover:scale-105 hover:text-white transition">Sign up</button>
+                <button class="bg-white text-black font-bold text-sm px-7 py-3 rounded-full hover:scale-105 transition">Log in</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 h-[calc(100vh-160px)] p-2 gap-2 overflow-hidden">
         
-        <aside class="w-80 bg-[#121212] rounded-lg p-5 flex flex-col justify-between">
-            <div class="space-y-6">
-                <div class="flex items-center gap-2 text-xl font-bold tracking-wider">
-                    <i class="fa-brands fa-spotify text-green-500 text-3xl"></i>
-                    <span>Müzik Kutum</span>
+        <aside class="w-96 flex flex-col justify-between bg-[#121212] rounded-lg overflow-hidden">
+            
+            <div class="p-4 flex flex-col gap-4 overflow-y-auto flex-1">
+                <div class="flex items-center justify-between text-gray-400 px-2 mb-2">
+                    <span class="font-bold flex items-center gap-3 text-sm hover:text-white transition cursor-pointer">
+                        <svg role="img" height="24" width="24" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M3 22a1 1 0 0 1-1-1V3a1 1 0 0 1 2 0v18a1 1 0 0 1-1 1zM15.5 2.134A1 1 0 0 1 17 3v18a1 1 0 0 1-1.5.866L6 16.268A1 1 0 0 1 5.5 15.4V8.6a1 1 0 0 1 .5-.866L15.5 2.134z"></path></svg>
+                        Your Library
+                    </span>
+                    <button onclick="createPlaylist()" class="bg-transparent hover:bg-[#1f1f1f] text-gray-300 hover:text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 transition">
+                        <i class="fa-solid fa-plus"></i> Create
+                    </button>
                 </div>
                 
-                <nav class="space-y-4 text-gray-400 font-semibold">
-                    <a href="#" class="flex items-center gap-4
+                <div class="bg-[#1f1f1f] p-5 rounded-xl space-y-3.5 shadow-sm">
+                    <h4 class="font-bold text-sm tracking-wide">Create your first playlist</h4>
+                    <p class="text-xs text-gray-400 font-medium">It's easy, we'll help you</p>
+                    <button onclick="createPlaylist()" class="bg-white text-black font-bold text-xs px-4 py-2.5 rounded-full hover:scale-105 transition">Create playlist</button>
+                </div>
+
+                <div class="bg-[#1f1f1f] p-5 rounded-xl space-y-3.5 shadow-sm">
+                    <h4 class="font-bold text-sm tracking-wide">Let's find some podcasts to follow</h4>
+                    <p class="text-xs text-gray-400 font-medium">We'll keep you updated on new episodes</p>
+                    <button class="bg-white text-black font-bold text-xs px-4 py-2.5 rounded-full hover:scale-105 transition">Browse podcasts</button>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-5 bg-[#121212]">
+                <div class="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-gray-400 font-medium leading-relaxed">
+                    <a href="#" class="hover:underline">Legal</a>
+                    <a href="#" class="hover:underline">Safety & Privacy Center</a>
+                    <a href="#" class="hover:underline">Privacy Policy</a>
+                    <a href="#" class="hover:underline">Cookies</a>
+                    <a href="#" class="hover:underline">About Ads</a>
+                    <a href="#" class="hover:underline">Accessibility</a>
+                    <a href="#" class="w-full hover:underline block mt-0.5">Cookies</a>
+                </div>
+                
+                <div>
+                    <button class="border border-gray-600 px-3.5 py-1.5 rounded-full text-white font-bold text-xs flex items-center gap-1.5 hover:border-white hover:scale-105 transition">
+                        <i class="fa-solid fa-globe text-sm"></i> English
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 bg-[#121212] rounded-lg overflow-y-auto p-6">
+            <section class="mb-8">
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="text-2xl font-bold hover:underline cursor-pointer tracking-tight">Trending songs</h2>
+                    <span class="text-xs font-bold text-gray-400 hover:underline cursor-pointer">Show all</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="trending-grid">
+                    </div>
+            </section>
+
+            <section>
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="text-2xl font-bold hover:underline cursor-pointer tracking-tight">Popular artists</h2>
+                    <span class="text-xs font-bold text-gray-400 hover:underline cursor-pointer">Show all</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="artists-grid">
+                    </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="h-24 bg-black border-t border-gray-900 px-5 flex items-center justify-between z-40">
+        <div class="flex items-center gap-4 w-1/4">
+            <img id="player-img" src="https://via.placeholder.com/56" class="w-14 h-14 rounded-md object-cover bg-gray-800">
+            <div class="truncate">
+                <h4 id="player-title" class="text-sm font-semibold hover:underline cursor-pointer truncate">Şarkı Seçilmedi</h4>
+                <p id="player-artist" class="text-xs text-gray-400 hover:underline cursor-pointer truncate">Sanatçı</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-2 w-2/4 max-w-xl">
+            <div class="flex items-center gap-6 text-gray-400">
+                <button class="hover:text-white transition"><i class="fa-solid fa-shuffle"></i></button>
+                <button onclick="prevSong()" class="hover:text-white transition text-lg"><i class="fa-solid fa-backward-step"></i></button>
+                <button onclick="togglePlay()" id="play-btn" class="bg-white text-black w-8 h-8 rounded-full flex items-center justify-center hover:scale-105 transition text-base"><i class="fa-solid fa-play pl-0.5"></i></button>
+                <button onclick="nextSong()" class="hover:text-white transition text-lg"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="hover:text-white transition"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="flex items-center gap-2 w-full text-xs text-gray-400">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-white hover:accent-green-500">
+                <span id="total-time">0:00</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 justify-end w-1/4 text-gray-400">
+            <i class="fa-solid fa-volume-high"></i>
+            <input type="range" id="volume-bar" value="80" class="w-20 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-white">
+        </div>
+    </footer>
+
+    <audio id="main-audio"></audio>
+
+    <script>
+        const songs = [
+            { id: 0, title: "Çok Güzel Gülüyorsun", artist: "BLOK3, Pozzi", img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300", src: "songs/sarki1.mp3" },
+            { id: 1, title: "Pistol", artist: "Semicenk", img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300", src: "songs/sarki2.mp3" },
+            { id: 2, title: "Günahkaram", artist: "Kazım Can", img: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=300", src: "songs/sarki3.mp3" },
+            { id: 3, title: "Hileli", artist: "Manifest", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300", src: "songs/sarki4.mp3" }
+        ];
+
+        const artists = [
+            { name: "Röya", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" },
+            { name: "Semicenk", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
+            { name: "Aygün Kazımova", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150" },
+            { name: "Sezen Aksu", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150" }
+        ];
+
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        const audio = document.getElementById('main-audio');
+        const playBtn = document.getElementById('play-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const volumeBar = document.getElementById('volume-bar');
+
+        window.onload = () => {
+            renderSongs();
+            renderArtists();
+            if(songs.length > 0) loadSong(songs[currentSongIndex]);
+        };
+
+        function renderSongs() {
+            const grid = document.getElementById('trending-grid');
+            grid.innerHTML = songs.map(song => `
+                <div onclick="playSelectedSong(${song.id})" class="bg-[#181818] p-4 rounded-lg hover:bg-[#282828] transition group cursor-pointer relative">
+                    <img src="${song.img}" class="w-full aspect-square object-cover rounded-md shadow-lg mb-3">
+                    <h3 class="font-bold text-sm tracking-wide truncate">${song.title}</h3>
+                    <p class="text-xs text-gray-400 mt-1 truncate">${song.artist}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderArtists() {
+            const grid = document.getElementById('artists-grid');
+            grid.innerHTML = artists.map(artist => `
+                <div class="bg-[#181818] p-4 rounded-lg hover:bg-[#282828] transition text-center cursor-pointer">
+                    <img src="${artist.img}" class="w-32 h-32 mx-auto object-cover rounded-full mb-3 shadow-lg">
+                    <h3 class="font-bold text-sm tracking-wide truncate">${artist.name}</h3>
+                    <p class="text-xs text-gray-400 mt-1">Artist</p>
+                </div>
+            `).join('');
+        }
+
+        function loadSong(song) {
+            document.getElementById('player-title').innerText = song.title;
+            document.getElementById('player-artist').innerText = song.artist;
+            document.getElementById('player-img').src = song.img;
+            audio.src = song.src;
+        }
+
+        function playSelectedSong(id) {
+            currentSongIndex = id;
+            loadSong(songs[currentSongIndex]);
+            playMusic();
+        }
+
+        function togglePlay() { if (isPlaying) pauseMusic(); else playMusic(); }
+        function playMusic() { isPlaying = true; playBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`; audio.play().catch(()=>{}); }
+        function pauseMusic() { isPlaying = false; playBtn.innerHTML = `<i class="fa-solid fa-play pl-0.5"></i>`; audio.pause(); }
+        function nextSong() { currentSongIndex = (currentSongIndex + 1) % songs.length; loadSong(songs[currentSongIndex]); playMusic(); }
+        function prevSong() { currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length; loadSong(songs[currentSongIndex]); playMusic(); }
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                progressBar.value = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('current-time').innerText = formatTime(audio.currentTime);
+                document.getElementById('total-time').innerText = formatTime(audio.duration);
+            }
+        });
+        progressBar.addEventListener('input', () => audio.currentTime = (progressBar.value / 100) * audio.duration);
+        volumeBar.addEventListener('input', () => audio.volume = volumeBar.value / 100);
+        function formatTime(t) { const m = Math.floor(t/60), s = Math.floor(t%60); return `${m}:${s < 10 ? '0' : ''}${s}`; }
+        function createPlaylist() { const n = prompt("Playlist Name:"); if(n) alert(`"${n}" created!`); }
+    </script>
+</body>
+</html>
